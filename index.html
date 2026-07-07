@@ -246,6 +246,16 @@
   .select-tract-btn:hover { background: rgba(26,127,55,0.1); }
   .select-tract-btn.deselect { border-color: var(--text-muted); color: var(--text-muted); }
 
+  /* SCORE BREAKDOWN */
+  .score-breakdown { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
+  .score-row { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+  .score-row-label { font-size: 9px; color: var(--text-muted); font-family: var(--font-mono); width: 92px; flex-shrink: 0; }
+  .score-row-bar { flex: 1; height: 5px; background: var(--bg); border-radius: 3px; overflow: hidden; border: 1px solid var(--border); }
+  .score-row-fill { height: 100%; background: var(--accent2); }
+  .score-row-value { font-size: 9px; font-family: var(--font-mono); color: var(--text-muted); width: 32px; text-align: right; flex-shrink: 0; }
+  .score-total { font-size: 10px; font-family: var(--font-mono); color: var(--text-muted); margin-top: 5px; text-align: right; }
+  .score-total strong { color: var(--yellow); }
+
   /* REQUEST DETAILS DROPDOWN */
   .request-details {
     margin-top: 8px; display: none; border-top: 1px solid var(--border); padding-top: 8px;
@@ -1462,6 +1472,33 @@ function renderTagPills(tags) {
   }).join(' ');
 }
 
+// ===== SCORE BREAKDOWN ("why this tract?") =====
+// Surfaces the four weighted components scoreTracts() combines into the
+// final score, so the ranking is inspectable instead of a black box.
+const SCORE_COMPONENTS = [
+  { key: 'vFit', label: 'Vuln. fit (25%)' },
+  { key: 'rVol', label: 'Req. volume (15%)' },
+  { key: 'reqMatch', label: 'Req. match (25%)' },
+  { key: 'prox', label: 'Proximity (35%)' },
+];
+
+function renderScoreBreakdown(t) {
+  const rows = SCORE_COMPONENTS.map(c => {
+    const pct = Math.round((t[c.key] || 0) * 100);
+    return `
+      <div class="score-row">
+        <span class="score-row-label">${c.label}</span>
+        <div class="score-row-bar"><div class="score-row-fill" style="width:${pct}%"></div></div>
+        <span class="score-row-value">${pct}%</span>
+      </div>`;
+  }).join('');
+  return `
+    <div class="score-breakdown">
+      ${rows}
+      <div class="score-total">Match score: <strong>${Math.round((t.score || 0) * 100)}%</strong></div>
+    </div>`;
+}
+
 // ===== RENDER RECOMMENDATIONS =====
 function renderRecommendations(tracts, n) {
   const show = tracts.slice(0, n);
@@ -1509,6 +1546,7 @@ function renderRecommendations(tracts, n) {
         <span class="stat-pill hands" onclick="event.stopPropagation(); showRequestsTab('${t.geoid}')" title="Click to see requests">🙋 ${hands} requests ▾</span>
       </div>
       ${tractTags.length > 0 ? `<div style="margin-top:6px;line-height:1.8;">${renderTagPills(tractTags)}</div>` : ''}
+      ${renderScoreBreakdown(t)}
       ${isSelected ? '<div style="font-size:11px;color:var(--green);font-family:var(--font-mono);margin-top:6px;">✓ Selected on map</div>' : '<div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Click to zoom, then select on map</div>'}
     `;
     // Clicking the card flies the map and updates requests tab content (without switching to it)
