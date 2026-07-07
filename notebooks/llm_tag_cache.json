@@ -1,0 +1,275 @@
+{
+  "I have a truck and can drive people to the shelter, room for 4": {
+    "offer_type": "services",
+    "service_tags": [
+      "transportation"
+    ],
+    "resource_tags": [],
+    "beneficiary_tags": [
+      "general",
+      "no_vehicle"
+    ],
+    "capacity_people": 4,
+    "capacity_notes": ""
+  },
+  "Retired nurse here, happy to help elderly folks with medications": {
+    "offer_type": "services",
+    "service_tags": [
+      "medical"
+    ],
+    "resource_tags": [],
+    "beneficiary_tags": [
+      "elderly"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  },
+  "Got bottled water and canned food to give away, first come first served": {
+    "offer_type": "goods",
+    "service_tags": [],
+    "resource_tags": [
+      "water",
+      "food"
+    ],
+    "beneficiary_tags": [
+      "general"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  },
+  "Can carry boxes and furniture, strong back, available all weekend": {
+    "offer_type": "services",
+    "service_tags": [
+      "heavy_lifting",
+      "volunteer_labor"
+    ],
+    "resource_tags": [],
+    "beneficiary_tags": [
+      "general"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  },
+  "I'm a certified caregiver for wheelchair users, can assist with transfers": {
+    "offer_type": "services",
+    "service_tags": [
+      "mobility_assistance",
+      "medical"
+    ],
+    "resource_tags": [],
+    "beneficiary_tags": [
+      "disability",
+      "elderly"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  },
+  "Free babysitting for families who need to evacuate quickly": {
+    "offer_type": "services",
+    "service_tags": [
+      "childcare"
+    ],
+    "resource_tags": [],
+    "beneficiary_tags": [
+      "families",
+      "children"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  },
+  "My van fits a wheelchair, glad to drive disabled neighbors anywhere": {
+    "offer_type": "services",
+    "service_tags": [
+      "transportation",
+      "mobility_assistance"
+    ],
+    "resource_tags": [],
+    "beneficiary_tags": [
+      "disability"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  },
+  "Have extra blankets, flashlights and a first aid kit to share": {
+    "offer_type": "goods",
+    "service_tags": [],
+    "resource_tags": [
+      "clothing",
+      "equipment",
+      "first_aid"
+    ],
+    "beneficiary_tags": [
+      "general"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  },
+  "Grandma next door needs someone to help her pack, I can go help": {
+    "offer_type": "services",
+    "service_tags": [
+      "mobility_assistance",
+      "heavy_lifting"
+    ],
+    "resource_tags": [],
+    "beneficiary_tags": [
+      "elderly"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  },
+  "Volunteer EMT, can do basic first aid and check on sick residents": {
+    "offer_type": "services",
+    "service_tags": [
+      "medical"
+    ],
+    "resource_tags": [
+      "first_aid"
+    ],
+    "beneficiary_tags": [
+      "elderly",
+      "disability",
+      "general"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  },
+  "No car but I can walk over and help load trucks or carry stuff": {
+    "offer_type": "services",
+    "service_tags": [
+      "heavy_lifting",
+      "volunteer_labor"
+    ],
+    "resource_tags": [],
+    "beneficiary_tags": [
+      "no_vehicle"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  },
+  "Offering rides for anyone without a vehicle trying to get out": {
+    "offer_type": "services",
+    "service_tags": [
+      "transportation"
+    ],
+    "resource_tags": [],
+    "beneficiary_tags": [
+      "no_vehicle",
+      "general"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  },
+  "Can watch kids for a few hours while parents deal with evacuation": {
+    "offer_type": "services",
+    "service_tags": [
+      "childcare"
+    ],
+    "resource_tags": [],
+    "beneficiary_tags": [
+      "families",
+      "children"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  },
+  "Bringing supplies for people who can't drive themselves to safety": {
+    "offer_type": "goods",
+    "service_tags": [
+      "transportation"
+    ],
+    "resource_tags": [],
+    "beneficiary_tags": [
+      "no_vehicle",
+      "elderly",
+      "disability"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  },
+  "I have a spare inhaler and some basic meds if anyone needs them urgently": {
+    "offer_type": "goods",
+    "service_tags": [],
+    "resource_tags": [
+      "medicine"
+    ],
+    "beneficiary_tags": [
+      "general"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  },
+  "Able to help move heavy medical equipment like oxygen tanks": {
+    "offer_type": "services",
+    "service_tags": [
+      "heavy_lifting",
+      "medical"
+    ],
+    "resource_tags": [
+      "medical",
+      "equipment"
+    ],
+    "beneficiary_tags": [
+      "disability",
+      "elderly"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  },
+  "Just moved here, don't have much, but I can babysit or help however": {
+    "offer_type": "services",
+    "service_tags": [
+      "childcare",
+      "volunteer_labor"
+    ],
+    "resource_tags": [],
+    "beneficiary_tags": [
+      "families",
+      "children",
+      "general"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  },
+  "Pickup truck available, can help anyone whose car won't start": {
+    "offer_type": "services",
+    "service_tags": [
+      "transportation",
+      "mobility_assistance"
+    ],
+    "resource_tags": [],
+    "beneficiary_tags": [
+      "no_vehicle",
+      "general"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  },
+  "Nursing student, can help elderly or disabled residents with mobility needs": {
+    "offer_type": "services",
+    "service_tags": [
+      "mobility_assistance",
+      "medical"
+    ],
+    "resource_tags": [],
+    "beneficiary_tags": [
+      "elderly",
+      "disability"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  },
+  "Have canned goods and clothes for families with little kids": {
+    "offer_type": "goods",
+    "service_tags": [],
+    "resource_tags": [
+      "food",
+      "clothing"
+    ],
+    "beneficiary_tags": [
+      "families",
+      "children"
+    ],
+    "capacity_people": null,
+    "capacity_notes": ""
+  }
+}

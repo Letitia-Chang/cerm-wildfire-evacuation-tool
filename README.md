@@ -31,6 +31,25 @@ CERM is a decision-support system, not an automated dispatcher — it surfaces w
 - **Privacy by design** — requesters see only aggregate counts per tract; helpers see simulated addresses with no personal contact info
 - **Rule-based fallback** — if the LLM call fails, a keyword-based extractor keeps the demo functional
 
+## Model Evaluation Highlights
+
+The live app's matching engine is a fixed linear formula, and its tagger has two extraction paths (LLM + rule-based fallback). [`notebooks/matching_model_evaluation.ipynb`](notebooks/matching_model_evaluation.ipynb) ports both faithfully from `index.html` and asks whether either can be improved on or is worth its cost:
+
+**1. Learned ranker vs. the fixed-weight formula.** A gradient-boosted model trained on the same four inputs the live formula uses (vFit, rVol, reqMatch, prox) was benchmarked against the hand-picked weights and a learned linear model, using a documented synthetic ground truth built around one hypothesis: vulnerability should only matter when it's paired with an actual unmet matching request, not in isolation. The tree model won on every ranking metric tested (NDCG@3, MRR, Spearman correlation) because it's the only one of the three that can represent that interaction — visible directly in the partial dependence plot below.
+
+<p align="center">
+  <img src="images/ranker_comparison.png" alt="Ranker comparison" width="47%"/>
+  <img src="images/gbt_interaction_pdp.png" alt="Learned interaction effect" width="47%"/>
+</p>
+
+**2. DeepSeek LLM tagger vs. rule-based fallback.** Against 20 hand-labeled free-text offers (including informal phrasing), the LLM scored a mean F1 of 0.79 versus 0.55 for the rule-based fallback on service + beneficiary tag extraction — a meaningful quality gap, though worth confirming on a larger labeled set before concluding it's worth the latency and cost of every request.
+
+<p align="center">
+  <img src="images/tagger_comparison.png" alt="Tagger F1 comparison" width="55%"/>
+</p>
+
+This evaluation also surfaced a real operational issue: the shared LLM proxy ran out of free-tier credits mid-run. The notebook now caches every real response to [`notebooks/llm_tag_cache.json`](notebooks/llm_tag_cache.json) so re-running it doesn't re-burn quota — a small illustration of why the app's rule-based fallback exists at all.
+
 ## Tech Stack
 
 | Layer | Technology |
