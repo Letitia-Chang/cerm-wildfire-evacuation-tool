@@ -50,6 +50,14 @@ The live app's matching engine is a fixed linear formula, and its tagger has two
 
 This evaluation also surfaced a real operational issue: the shared LLM proxy ran out of free-tier credits mid-run. The notebook now caches every real response to [`notebooks/llm_tag_cache.json`](notebooks/llm_tag_cache.json) so re-running it doesn't re-burn quota — a small illustration of why the app's rule-based fallback exists at all.
 
+**3. Performance metrics, actually measured.** The README originally *proposed* five performance metrics and two adoption metrics without computing any of them — the app has no backend or event log to compute them from. [`notebooks/performance_metrics_dashboard.ipynb`](notebooks/performance_metrics_dashboard.ipynb) runs a discrete-event simulation (real requests + real matching logic, with simulated arrival times since no timestamps exist anywhere in the data) to turn three of them into real numbers: **Request Alignment Score: 79.7%**, and a Demand Coverage curve broken out by vulnerability flag.
+
+<p align="center">
+  <img src="images/metrics_dashboard.png" alt="Performance metrics dashboard" width="95%"/>
+</p>
+
+The standout result: every vulnerable-flagged group (elderly, disability, no-vehicle) gets resolved faster than the overall population — not an engineered outcome, just a side effect of `vFit` boosting those tracts' scores. That's the "equity-by-design" claim in the abstract, actually measured instead of asserted. The notebook is equally explicit about what it *can't* measure: Evacuation Efficiency and the two adoption metrics require real deployment telemetry (before/after evacuation timestamps, signup/session logs) that a static prototype with no backend doesn't produce — rather than fabricate numbers for those, it names the gap and points to the relevant Future Work item.
+
 ## Tech Stack
 
 | Layer | Technology |
