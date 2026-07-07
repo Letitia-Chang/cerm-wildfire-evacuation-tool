@@ -19,7 +19,7 @@
     --accent: #cf4b38;
     --accent2: #0969da;
     --green: #1a7f37;
-    --yellow: #9a6700;
+    --yellow: #7d5200; /* darkened from #9a6700 for WCAG AA contrast on light backgrounds */
     --red: #cf222e;
     --orange: #bc4c00;
     --purple: #8250df;
@@ -121,7 +121,7 @@
     padding: 7px 10px; border-radius: 5px; outline: none;
     transition: border-color 0.15s; margin-bottom: 8px;
   }
-  .resource-input-area .loc-input:focus { border-color: var(--accent2); }
+  .resource-input-area .loc-input:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(9,105,218,0.25); }
   .resource-input-area .loc-input::placeholder { color: var(--text-muted); }
   .resource-input-area textarea {
     width: 100%; background: var(--panel2); border: 1px solid var(--border);
@@ -130,7 +130,7 @@
     transition: border-color 0.15s; min-height: 70px; max-height: 120px;
     line-height: 1.4; margin-bottom: 8px;
   }
-  .resource-input-area textarea:focus { border-color: var(--accent2); }
+  .resource-input-area textarea:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(9,105,218,0.25); }
   .resource-input-area textarea::placeholder { color: var(--text-muted); }
   .submit-btn {
     width: 100%; padding: 10px 16px; background: var(--accent2); border: none;
@@ -162,7 +162,7 @@
     border-radius: 8px; padding: 10px 12px; color: #b83200;
     font-size: 12px; line-height: 1.5;
   }
-  .fire-warning-box strong { color: var(--fire); }
+  .fire-warning-box strong { color: #b83200; } /* darkened from var(--fire) for WCAG AA contrast */
 
   /* MIDDLE PANEL (recommendations + requests tabs) */
   .results-panel {
@@ -222,6 +222,11 @@
     border-radius: 8px; padding: 12px; transition: all 0.15s; position: relative;
   }
   .tract-card:hover { border-color: var(--accent2); }
+  .tract-card:focus-visible,
+  .stat-pill.hands:focus-visible,
+  .popup-hands:focus-visible {
+    outline: 2px solid var(--accent2); outline-offset: 2px;
+  }
   .tract-card.selected { border-color: var(--green); background: rgba(26,127,55,0.06); }
   .tract-card.fire-disabled { border-color: var(--fire); background: rgba(255,69,0,0.05); opacity: 0.7; cursor: not-allowed; }
   .tract-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
@@ -377,7 +382,7 @@
   .popup-title { font-weight: 600; color: var(--accent2); margin-bottom: 6px; font-size: 13px; }
   .popup-stat { color: var(--text-muted); }
   .popup-stat span { color: var(--text); }
-  .popup-fire { color: var(--fire); font-weight: 600; margin-top: 6px; }
+  .popup-fire { color: #b83200; font-weight: 600; margin-top: 6px; } /* darkened from var(--fire) for WCAG AA contrast */
   .popup-hands { color: var(--accent2); transition: opacity 0.15s; }
   .popup-hands:hover { opacity: 0.7; }
 
@@ -415,9 +420,9 @@
 <header>
   <div class="logo">🔥 CERM <span>/ Community Evacuation Resource Matcher</span></div>
   <div class="county-tabs">
-    <button class="county-tab active" onclick="flyToCounty('Butte')">Butte</button>
-    <button class="county-tab" onclick="flyToCounty('Shasta')">Shasta</button>
-    <button class="county-tab" onclick="flyToCounty('Riverside')">Riverside</button>
+    <button class="county-tab active" onclick="flyToCounty('Butte')" aria-pressed="true">Butte</button>
+    <button class="county-tab" onclick="flyToCounty('Shasta')" aria-pressed="false">Shasta</button>
+    <button class="county-tab" onclick="flyToCounty('Riverside')" aria-pressed="false">Riverside</button>
   </div>
   <div class="role-badge" id="role-badge-header">No role selected</div>
 </header>
@@ -425,21 +430,21 @@
 <div class="app-body">
   <!-- LEFT SIDEBAR -->
   <div class="sidebar" id="sidebar">
-    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">◀</button>
+    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" aria-label="Collapse sidebar">◀</button>
 
     <div class="role-selector">
       <h3>I am a...</h3>
       <div class="role-btns">
-        <button class="role-btn provider" id="btn-provider" onclick="setRole('provider')">🤝 Helper</button>
-        <button class="role-btn requester" id="btn-requester" onclick="setRole('requester')">🙋 Requester</button>
+        <button class="role-btn provider" id="btn-provider" onclick="setRole('provider')" aria-pressed="false">🤝 Helper</button>
+        <button class="role-btn requester" id="btn-requester" onclick="setRole('requester')" aria-pressed="false">🙋 Requester</button>
       </div>
     </div>
 
     <!-- Resource input (appears after role selection) -->
     <div class="resource-input-area" id="resource-input-area">
       <h4 id="resource-input-title">Describe your resources</h4>
-      <input type="text" class="loc-input" id="location-input" placeholder="123 Main St, City, CA">
-      <textarea id="resource-textarea" placeholder="e.g. I have 2 cars, bottled water, can help elderly" rows="3"></textarea>
+      <input type="text" class="loc-input" id="location-input" placeholder="123 Main St, City, CA" aria-label="Your address">
+      <textarea id="resource-textarea" placeholder="e.g. I have 2 cars, bottled water, can help elderly" rows="3" aria-label="Describe your resources"></textarea>
       <button class="submit-btn" id="submit-btn" onclick="handleSend()">SUBMIT</button>
     </div>
 
@@ -475,15 +480,15 @@
           Requests <span class="tab-badge" id="requests-tab-badge">0</span>
         </button>
       </div>
-      <button class="results-close" onclick="closeResultsPanel()">✕</button>
+      <button class="results-close" onclick="closeResultsPanel()" aria-label="Close recommendations panel">✕</button>
     </div>
-    <div class="results-tab-content active" id="tab-content-recs"></div>
+    <div class="results-tab-content active" id="tab-content-recs" aria-live="polite"></div>
     <div class="results-tab-content" id="tab-content-requests"></div>
     <div class="results-show-more" id="results-show-more" style="display:none;">
-      <label>Show tracts:</label>
+      <label for="num-show-input">Show tracts:</label>
       <input type="number" class="num-input" id="num-show-input" value="3" min="1" max="20"
-        onchange="updateNumShow(parseInt(this.value))">
-      <label>/ 20</label>
+        aria-label="Number of tracts to show" onchange="updateNumShow(parseInt(this.value))">
+      <span aria-hidden="true">/ 20</span>
     </div>
   </div>
 
@@ -706,7 +711,7 @@ function buildPopup(t) {
     <div class="popup-stat">👴 Elderly: <span>${elderly.toLocaleString()} (${t.pct_elderly}%)</span></div>
     <div class="popup-stat">♿ Disability: <span>${disability.toLocaleString()} (${t.pct_disability}%)</span></div>
     <div class="popup-stat">🚗 No vehicle: <span>${novehicle.toLocaleString()} (${t.pct_novehicle}%)</span></div>
-    ${isFire ? '<div class="popup-fire">🔥 FIRE ZONE — functions disabled</div>' : `<div class="popup-hands" onclick="map.closePopup(); showRequestsTab('${t.geoid}')" style="cursor:pointer;text-decoration:underline;" title="Click to view requests">🙋 Active requests: ${hands} ▾</div>`}
+    ${isFire ? '<div class="popup-fire">🔥 FIRE ZONE — functions disabled</div>' : `<div class="popup-hands" tabindex="0" role="button" onclick="map.closePopup(); showRequestsTab('${t.geoid}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();map.closePopup();showRequestsTab('${t.geoid}');}" style="cursor:pointer;text-decoration:underline;" title="Click to view requests">🙋 Active requests: ${hands} ▾</div>`}
     ${selectBtn}
   `;
 }
@@ -952,7 +957,9 @@ function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
   const btn = document.getElementById('sidebar-toggle');
   sidebar.classList.toggle('collapsed');
-  btn.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
+  const collapsed = sidebar.classList.contains('collapsed');
+  btn.textContent = collapsed ? '▶' : '◀';
+  btn.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
   setTimeout(() => map.invalidateSize(), 300);
 }
 
@@ -962,7 +969,9 @@ function setRole(role) {
   // Remove previous role's location pin
   setUserLocationPin(null);
   document.getElementById('btn-provider').classList.toggle('active', role === 'provider');
+  document.getElementById('btn-provider').setAttribute('aria-pressed', role === 'provider');
   document.getElementById('btn-requester').classList.toggle('active', role === 'requester');
+  document.getElementById('btn-requester').setAttribute('aria-pressed', role === 'requester');
   document.getElementById('role-badge-header').className = `role-badge ${role}`;
   document.getElementById('role-badge-header').textContent = role === 'provider' ? '🤝 Helper' : '🙋 Requester';
 
@@ -975,9 +984,11 @@ function setRole(role) {
   if (role === 'provider') {
     title.textContent = 'Describe your resources';
     textarea.placeholder = "e.g. I have 2 cars, bottled water, can help elderly";
+    textarea.setAttribute('aria-label', 'Describe your resources');
   } else {
     title.textContent = 'Describe what you need';
     textarea.placeholder = "e.g. Need transportation, I'm at 123 Oak St, Redding";
+    textarea.setAttribute('aria-label', 'Describe what you need');
   }
 
   // Clear text input when switching roles
@@ -1534,6 +1545,9 @@ function renderRecommendations(tracts, n) {
     card.id = `card-${t.geoid}`;
     card.style.cursor = 'pointer';
     card.title = 'Click to zoom map to this tract';
+    card.tabIndex = 0;
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', `${t.name.split(';')[0]}, ${t.county} County, match score ${Math.round((t.score || 0) * 100)}%. Activate to zoom map.`);
     const tractTags = getTagsForTract(t.geoid);
     card.innerHTML = `
       <div class="tract-card-header">
@@ -1543,16 +1557,21 @@ function renderRecommendations(tracts, n) {
         </div>
       </div>
       <div class="tract-stats">
-        <span class="stat-pill hands" onclick="event.stopPropagation(); showRequestsTab('${t.geoid}')" title="Click to see requests">🙋 ${hands} requests ▾</span>
+        <span class="stat-pill hands" tabindex="0" role="button" onclick="event.stopPropagation(); showRequestsTab('${t.geoid}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();showRequestsTab('${t.geoid}');}" title="Click to see requests">🙋 ${hands} requests ▾</span>
       </div>
       ${tractTags.length > 0 ? `<div style="margin-top:6px;line-height:1.8;">${renderTagPills(tractTags)}</div>` : ''}
       ${renderScoreBreakdown(t)}
       ${isSelected ? '<div style="font-size:11px;color:var(--green);font-family:var(--font-mono);margin-top:6px;">✓ Selected on map</div>' : '<div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Click to zoom, then select on map</div>'}
     `;
-    // Clicking the card flies the map and updates requests tab content (without switching to it)
-    card.addEventListener('click', () => {
+    // Clicking (or activating via keyboard) the card flies the map and updates requests tab content (without switching to it)
+    const activateCard = () => {
       map.flyTo([t.clat, t.clon], 13, { duration: 1.2 });
       updateRequestsTabContent(t.geoid);
+    };
+    card.addEventListener('click', activateCard);
+    card.addEventListener('keydown', (e) => {
+      if (e.target !== card) return; // don't double-fire when the nested stat-pill handles its own key
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activateCard(); }
     });
     list.appendChild(card);
   });
@@ -1857,7 +1876,9 @@ document.getElementById('resource-textarea').addEventListener('keydown', (e) => 
 function flyToCounty(county) {
   currentCounty = county;
   document.querySelectorAll('.county-tab').forEach(t => {
-    t.classList.toggle('active', t.textContent === county);
+    const isActive = t.textContent === county;
+    t.classList.toggle('active', isActive);
+    t.setAttribute('aria-pressed', isActive);
   });
   const center = COUNTY_CENTERS[county];
   const zoom = COUNTY_ZOOM[county];
