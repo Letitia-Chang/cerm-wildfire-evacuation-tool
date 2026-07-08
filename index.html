@@ -491,7 +491,7 @@
     <div class="sidebar-fire-warnings visible" id="sidebar-fire-warnings">
       <div class="fire-warning-box">
         🔥 <strong>3 Fire Zones Active</strong><br>
-        Butte: Census Tract 21<br>
+        Butte: 15 tracts (2018 Camp Fire perimeter)<br>
         Shasta: Census Tract 121.02<br>
         Riverside: Census Tract 451.17<br>
         <span style="font-size:11px;color:#656d76;">These tracts are disabled.</span>
@@ -574,10 +574,19 @@ async function loadData() {
   TRACT_DATA.forEach(t => tractByGeoid[t.geoid] = t);
 }
 
+// Tracts excluded from matching as active fire zones. Butte County uses the
+// real 2018 Camp Fire perimeter intersected against tract boundaries (see
+// notebooks/camp_fire_backtest.ipynb) -- a single hardcoded tract there
+// previously didn't even overlap the real fire. Shasta/Riverside remain
+// single placeholder tracts pending an equivalent historical backtest.
 const FIRE_TRACTS = {
-  'Butte':     '06007000700',
-  'Shasta':    '06089010806',
-  'Riverside': '06065040402'
+  'Butte': [
+    '06007000901', '06007001500', '06007001601', '06007001602', '06007001702',
+    '06007001703', '06007001704', '06007001800', '06007001900', '06007002000',
+    '06007002100', '06007002200', '06007002300', '06007002401', '06007002500',
+  ],
+  'Shasta':    ['06089010806'],
+  'Riverside': ['06065040402'],
 };
 
 const COUNTY_CENTERS = {
@@ -632,7 +641,7 @@ const FALLBACK_REQUEST_TEMPLATES = [
 
 function simulateRaisedHands() {
   raisedHands = {};
-  const fireGeoids = new Set(Object.values(FIRE_TRACTS));
+  const fireGeoids = new Set(Object.values(FIRE_TRACTS).flat());
   TRACT_DATA.forEach(t => {
     if (fireGeoids.has(t.geoid)) { raisedHands[t.geoid] = 0; return; }
     const baseRate = 1.5;
@@ -695,14 +704,14 @@ function setUserLocationPin(latLon, label) {
 }
 
 function getFillColor(t) {
-  const fireGeoids = new Set(Object.values(FIRE_TRACTS));
+  const fireGeoids = new Set(Object.values(FIRE_TRACTS).flat());
   if (fireGeoids.has(t.geoid)) return '#ff4500';
   if (selectedTracts.has(t.geoid)) return '#1a7f37';
   return '#b8c9d9';
 }
 
 function getFillOpacity(t) {
-  const fireGeoids = new Set(Object.values(FIRE_TRACTS));
+  const fireGeoids = new Set(Object.values(FIRE_TRACTS).flat());
   if (fireGeoids.has(t.geoid)) return 0.55;
   if (selectedTracts.has(t.geoid)) return 0.35;
   return 0.25;
@@ -716,7 +725,7 @@ function getBorderStyle(t) {
 }
 
 function buildPopup(t) {
-  const fireGeoids = new Set(Object.values(FIRE_TRACTS));
+  const fireGeoids = new Set(Object.values(FIRE_TRACTS).flat());
   const isFire = fireGeoids.has(t.geoid);
   const hands = raisedHands[t.geoid] || 0;
   const isSelected = selectedTracts.has(t.geoid);
@@ -783,7 +792,7 @@ function renderMap() {
         // Clear previous clicked tract styling
         clearClickedTract();
 
-        const fireGeoids = new Set(Object.values(FIRE_TRACTS));
+        const fireGeoids = new Set(Object.values(FIRE_TRACTS).flat());
         if (fireGeoids.has(t.geoid)) {
           // Fire zone — show warning in results panel
           showFireZoneMessage(t);
@@ -802,7 +811,7 @@ function renderMap() {
       });
       // Hover: show summary tooltip + highlight
       layer.on('mouseover', (e) => {
-        const fireGeoids = new Set(Object.values(FIRE_TRACTS));
+        const fireGeoids = new Set(Object.values(FIRE_TRACTS).flat());
         if (!fireGeoids.has(t.geoid) && !selectedTracts.has(t.geoid) && !recommendedGeoids.has(t.geoid)) {
           layer.setStyle({ fillOpacity: 0.4, weight: 1.5, color: '#9ca3af' });
         }
@@ -810,7 +819,7 @@ function renderMap() {
         const elderly = Math.round(t.pop * t.pct_elderly / 100);
         const disability = Math.round(t.pop * t.pct_disability / 100);
         const novehicle = Math.round(t.pop * t.pct_novehicle / 100);
-        const isFire = new Set(Object.values(FIRE_TRACTS)).has(t.geoid);
+        const isFire = new Set(Object.values(FIRE_TRACTS).flat()).has(t.geoid);
         layer.bindTooltip(`
           <div style="font-family:var(--font-sans);font-size:12px;line-height:1.6;min-width:160px;">
             <strong style="color:var(--accent2);">${t.name.split(';')[0]}</strong><br>
@@ -843,7 +852,7 @@ function renderMap() {
 function renderHandsMarkers() {
   Object.values(handsMarkers).forEach(m => m.remove());
   handsMarkers = {};
-  const fireGeoids = new Set(Object.values(FIRE_TRACTS));
+  const fireGeoids = new Set(Object.values(FIRE_TRACTS).flat());
   const isRequesterMode = currentRole === 'requester';
   TRACT_DATA.forEach(t => {
     if (t.county !== currentCounty) return;
@@ -941,7 +950,7 @@ async function loadRequestsCSV() {
     }
     // Update raisedHands counts from CSV
     raisedHands = {};
-    const fireGeoids = new Set(Object.values(FIRE_TRACTS));
+    const fireGeoids = new Set(Object.values(FIRE_TRACTS).flat());
     for (const geoid in tractRequests) {
       if (!fireGeoids.has(geoid)) {
         raisedHands[geoid] = tractRequests[geoid].length;
@@ -1185,7 +1194,7 @@ function fallbackExtractRequest(text) {
 
 // ===== MATCHING ENGINE =====
 function scoreTracts(parsed, providerLatLon) {
-  const fireGeoids = new Set(Object.values(FIRE_TRACTS));
+  const fireGeoids = new Set(Object.values(FIRE_TRACTS).flat());
   
   // Filter to current county only, exclude fire tracts
   const candidates = TRACT_DATA.filter(t => 
@@ -1766,7 +1775,7 @@ async function handleRequesterSubmission(text) {
   document.getElementById('submit-btn').disabled = true;
 
   const county = currentCounty;
-  const eligible = TRACT_DATA.filter(t => t.county === county && !Object.values(FIRE_TRACTS).includes(t.geoid) && t.total_flags > 0);
+  const eligible = TRACT_DATA.filter(t => t.county === county && !Object.values(FIRE_TRACTS).flat().includes(t.geoid) && t.total_flags > 0);
   if (eligible.length === 0) {
     loading.classList.remove('visible');
     isProcessing = false;
@@ -1786,7 +1795,7 @@ async function handleRequesterSubmission(text) {
 
   // Check if the requester's location falls in or nearest to a fire-evacuation tract
   if (requesterLatLon) {
-    const fireGeoids = new Set(Object.values(FIRE_TRACTS));
+    const fireGeoids = new Set(Object.values(FIRE_TRACTS).flat());
     const allCountyTracts = TRACT_DATA.filter(t => t.county === county);
     let nearestTract = null, nearestDist = Infinity;
     allCountyTracts.forEach(t => {
