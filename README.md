@@ -4,6 +4,7 @@
 
 <h1 align="center">Community Evacuation Resource Matcher (CERM)</h1>
 <p align="center"><em>WiDS Datathon 2026 · Team "Ramblin' Pathfinders" · Georgia Institute of Technology</em></p>
+<p align="center"><a href="https://letitia-chang.github.io/cerm-wildfire-evacuation-tool/"><strong>Live Demo</strong></a></p>
 
 ![CERM demo](images/helperFullProcess.gif)
 
@@ -136,7 +137,9 @@ The notebook's first cell pulls raw ACS demographic data directly from the Censu
 
 ## Demo Instructions
 
-1. Serve the app locally (see above) and choose a county (Butte, Shasta, or Riverside).
+**Live demo:** [letitia-chang.github.io/cerm-wildfire-evacuation-tool](https://letitia-chang.github.io/cerm-wildfire-evacuation-tool/)
+
+1. Open the live demo above, or serve the app locally (see Setup Instructions), and choose a county (Butte, Shasta, or Riverside).
 2. Pick a role: **Requester** (describe a need in free text) or **Helper** (describe what you can offer).
 3. The LLM extracts structured tags from your text, and the matching engine ranks census tracts by need, fit, and proximity.
 4. Click a tract marked as an active fire zone to see the safety constraint block matching and redirect to emergency guidance instead.
