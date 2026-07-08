@@ -58,6 +58,20 @@ This evaluation also surfaced a real operational issue: the shared LLM proxy ran
 
 The standout result: every vulnerable-flagged group (elderly, disability, no-vehicle) gets resolved faster than the overall population — not an engineered outcome, just a side effect of `vFit` boosting those tracts' scores. That's the "equity-by-design" claim in the abstract, actually measured instead of asserted. The notebook is equally explicit about what it *can't* measure: Evacuation Efficiency and the two adoption metrics require real deployment telemetry (before/after evacuation timestamps, signup/session logs) that a static prototype with no backend doesn't produce — rather than fabricate numbers for those, it names the gap and points to the relevant Future Work item.
 
+**4. Backtest against a real disaster: the 2018 Camp Fire.** Every notebook above validates against simulated data, since the app has no real usage history. [`notebooks/camp_fire_backtest.ipynb`](notebooks/camp_fire_backtest.ipynb) instead checks two of CERM's core design decisions against the deadliest fire in California history — which happened in Butte County, one of the three counties this app already covers. Using the real historical fire perimeter (fetched live from CAL FIRE's FRAP database) intersected against the real tract boundaries already in this repo:
+
+<p align="center">
+  <img src="images/camp_fire_tract_map.png" alt="Camp Fire perimeter vs. Butte County tracts" width="60%"/>
+</p>
+
+The real fire crossed **15 Butte County census tracts** — and the single hardcoded "fire zone" tract `index.html` uses for Butte (`FIRE_TRACTS['Butte']`) isn't one of them; it sits outside the burn area entirely. That's real evidence, not a hypothetical, for why fire-zone exclusion needs to come from a live perimeter feed rather than a constant in the source. The backtest also turned up a concrete, one-line bug along the way: the app's fire-warning banner displays "Census Tract 21" (which *is* a real affected tract) while the GEOID actually driving the exclusion logic points to Census Tract 7 — the two were never kept in sync.
+
+<p align="center">
+  <img src="images/camp_fire_vulnerability_comparison.png" alt="Vulnerability comparison for Camp Fire-affected tracts" width="70%"/>
+</p>
+
+On the demographic side, the real ACS data shows the affected tracts run meaningfully higher on elderly households (46.5% vs. 31.4% for the rest of the county) — consistent with the well-documented fact that 80% of the Camp Fire's 85 fatalities were over 65. Disability and no-vehicle rates don't show the same pattern in this event, a useful, honest caveat against treating `vFit`'s three flags as interchangeable evidence of risk.
+
 ## Tech Stack
 
 | Layer | Technology |
