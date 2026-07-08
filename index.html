@@ -413,6 +413,34 @@
     padding: 6px 10px !important;
   }
   .tract-tooltip .leaflet-tooltip-tip { display: none; }
+
+  /* ===== MOBILE / NARROW VIEWPORT LAYOUT ===== */
+  /* Base layout is a fixed-width flex row (sidebar + results panel + map),
+     which only works on desktop. Below 768px, stack sidebar above map and
+     turn the results panel into a full-screen overlay instead of a third
+     380px-wide column that doesn't fit. */
+  @media (max-width: 768px) {
+    header { flex-wrap: wrap; row-gap: 8px; padding: 8px 12px; }
+    .logo span { display: none; }
+    .county-tabs { margin-left: 0; order: 3; width: 100%; }
+    .role-badge { margin-left: auto; }
+
+    .app-body { flex-direction: column; }
+
+    .sidebar {
+      width: 100%; max-height: 45vh; order: 1;
+      border-right: none; border-bottom: 1px solid var(--border);
+    }
+    .sidebar-toggle { display: none; }
+
+    #map-wrapper { order: 2; flex: 1; min-height: 240px; }
+
+    .results-panel.visible {
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      z-index: 2000; border-right: none;
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.2);
+    }
+  }
 </style>
 </head>
 <body>
