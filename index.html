@@ -23,12 +23,18 @@
     --red: #cf222e;
     --orange: #bc4c00;
     --purple: #8250df;
-    --fire: #ff4500;
+    --fire: #bc4c00; /* muted from #ff4500 -- less "traffic cone", more consistent with the rest of the palette */
     --font-mono: 'Space Mono', monospace;
     --font-sans: 'DM Sans', sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: var(--font-sans); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+  .icon {
+    width: 1em; height: 1em; flex-shrink: 0;
+    fill: none; stroke: currentColor; stroke-width: 2;
+    stroke-linecap: round; stroke-linejoin: round;
+    vertical-align: -0.15em;
+  }
 
   /* HEADER */
   header {
@@ -39,18 +45,18 @@
     flex-shrink: 0;
     z-index: 1000;
   }
-  .logo { font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--accent); letter-spacing: 0.05em; }
+  .logo { font-family: var(--font-sans); font-size: 15px; font-weight: 700; color: var(--accent); letter-spacing: 0; }
   .logo span { color: var(--text-muted); font-weight: 400; }
   .county-tabs { display: flex; gap: 6px; margin-left: auto; }
   .county-tab {
-    font-family: var(--font-mono); font-size: 11px; padding: 5px 12px;
+    font-family: var(--font-sans); font-size: 12px; padding: 5px 12px;
     border: 1px solid var(--border); border-radius: 4px; background: transparent;
     color: var(--text-muted); cursor: pointer; transition: all 0.15s;
   }
   .county-tab.active { background: var(--accent2); color: var(--bg); border-color: var(--accent2); font-weight: 700; }
   .county-tab:hover:not(.active) { border-color: var(--accent2); color: var(--accent2); }
   .role-badge {
-    font-family: var(--font-mono); font-size: 10px; padding: 4px 10px;
+    font-family: var(--font-sans); font-size: 11px; font-weight: 600; padding: 4px 10px;
     border-radius: 20px; background: var(--panel2); border: 1px solid var(--border);
     color: var(--text-muted);
   }
@@ -63,6 +69,15 @@
   /* MAP */
   #map { flex: 1; height: 100%; }
   .leaflet-container { background: #f6f8fa !important; }
+  /* Leaflet gives every interactive polygon tabindex="0"; the browser's default
+     focus ring then draws a rectangle around the SVG bounding box instead of
+     following the polygon shape. Suppress it and use a shape-following glow
+     for keyboard focus only (mouse clicks get no ring, matching :focus-visible). */
+  .leaflet-interactive:focus { outline: none; }
+  .leaflet-interactive:focus-visible {
+    outline: none;
+    filter: drop-shadow(0 0 2px var(--accent2)) drop-shadow(0 0 2px var(--accent2));
+  }
 
   /* LEFT SIDEBAR */
   .sidebar {
@@ -91,7 +106,7 @@
     padding: 16px;
     border-bottom: 1px solid var(--border);
   }
-  .role-selector h3 { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+  .role-selector h3 { font-family: var(--font-sans); font-weight: 700; font-size: 11px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 10px; }
   .role-btns { display: flex; gap: 8px; }
   .role-btn {
     flex: 1; padding: 10px 8px; border-radius: 6px;
@@ -112,8 +127,8 @@
   }
   .resource-input-area.visible { display: block; }
   .resource-input-area h4 {
-    font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
-    letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px;
+    font-family: var(--font-sans); font-weight: 700; font-size: 11px; color: var(--text-muted);
+    letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 10px;
   }
   .resource-input-area .loc-input {
     width: 100%; background: var(--panel2); border: 1px solid var(--border);
@@ -134,8 +149,8 @@
   .resource-input-area textarea::placeholder { color: var(--text-muted); }
   .submit-btn {
     width: 100%; padding: 10px 16px; background: var(--accent2); border: none;
-    color: #fff; font-family: var(--font-mono); font-size: 12px;
-    font-weight: 700; border-radius: 6px; cursor: pointer;
+    color: #fff; font-family: var(--font-sans); font-size: 13px;
+    font-weight: 600; border-radius: 6px; cursor: pointer;
     transition: all 0.15s;
   }
   .submit-btn:hover { background: #0553b1; }
@@ -149,8 +164,8 @@
   }
   .sidebar-status.visible { display: block; }
   .sidebar-status h4 {
-    font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
-    letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px;
+    font-family: var(--font-sans); font-weight: 700; font-size: 11px; color: var(--text-muted);
+    letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px;
   }
   .tag { display: inline-block; background: var(--panel2); border: 1px solid var(--border); border-radius: 3px; padding: 1px 6px; font-size: 11px; font-family: var(--font-mono); color: var(--accent); margin: 2px; }
   .sidebar-fire-warnings {
@@ -158,7 +173,7 @@
   }
   .sidebar-fire-warnings.visible { display: block; }
   .fire-warning-box {
-    background: rgba(255,69,0,0.08); border: 1px solid var(--fire);
+    background: rgba(188,76,0,0.08); border: 1px solid var(--fire);
     border-radius: 8px; padding: 10px 12px; color: #b83200;
     font-size: 12px; line-height: 1.5;
   }
@@ -181,7 +196,7 @@
     display: flex; flex: 1;
   }
   .results-tab {
-    padding: 10px 16px; font-family: var(--font-mono); font-size: 11px;
+    padding: 10px 16px; font-family: var(--font-sans); font-size: 13px; font-weight: 500;
     color: var(--text-muted); cursor: pointer; border: none; background: none;
     border-bottom: 2px solid transparent; transition: all 0.15s;
     white-space: nowrap;
@@ -228,7 +243,7 @@
     outline: 2px solid var(--accent2); outline-offset: 2px;
   }
   .tract-card.selected { border-color: var(--green); background: rgba(26,127,55,0.06); }
-  .tract-card.fire-disabled { border-color: var(--fire); background: rgba(255,69,0,0.05); opacity: 0.7; cursor: not-allowed; }
+  .tract-card.fire-disabled { border-color: var(--fire); background: rgba(188,76,0,0.05); opacity: 0.7; cursor: not-allowed; }
   .tract-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
   .tract-name { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.3; }
   .tract-county { font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); }
@@ -359,7 +374,7 @@
   /* FIRE OVERLAY */
   .fire-banner {
     position: absolute; top: 60px; left: 50%; transform: translateX(-50%);
-    z-index: 2000; background: rgba(255,69,0,0.9); color: white;
+    z-index: 2000; background: rgba(188,76,0,0.85); color: white;
     padding: 8px 20px; border-radius: 20px; font-family: var(--font-mono);
     font-size: 12px; font-weight: 700; pointer-events: none;
     animation: fadeIn 0.5s ease;
@@ -397,7 +412,7 @@
     border: 2px solid white; cursor: pointer;
     box-shadow: 0 2px 8px rgba(0,0,0,0.4);
   }
-  .hands-bubble.fire { background: rgba(255,69,0,0.9); color: white; }
+  .hands-bubble.fire { background: rgba(188,76,0,0.85); color: white; }
   .hands-bubble.requester-own { background: rgba(207,34,46,0.95); color: white; border-color: #ff6b6b; }
 
   .provider-selected-marker {
@@ -445,8 +460,32 @@
 </head>
 <body>
 
+<!-- Icon sprite: Lucide icons (ISC license), inlined as <symbol>s so they can be
+     referenced with <svg class="icon"><use href="#icon-NAME"/></svg> anywhere
+     below without a build step or external request. -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+  <symbol id="icon-flame" viewBox="0 0 24 24"><path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4" /></symbol>
+  <symbol id="icon-handshake" viewBox="0 0 24 24"><path d="m11 17 2 2a1 1 0 1 0 3-3" /><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4" /><path d="m21 3 1 11h-2" /><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3" /><path d="M3 4h8" /></symbol>
+  <symbol id="icon-hand" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2" /><path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2" /><path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8" /><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" /></symbol>
+  <symbol id="icon-accessibility" viewBox="0 0 24 24"><circle cx="16" cy="4" r="1" /><path d="m18 19 1-7-6 1" /><path d="m5 8 3-3 5.5 3-2.36 3.5" /><path d="M4.24 14.5a5 5 0 0 0 6.88 6" /><path d="M13.76 17.5a5 5 0 0 0-6.88-6" /></symbol>
+  <symbol id="icon-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" /><circle cx="7" cy="17" r="2" /><path d="M9 17h6" /><circle cx="17" cy="17" r="2" /></symbol>
+  <symbol id="icon-x" viewBox="0 0 24 24"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></symbol>
+  <symbol id="icon-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" /></symbol>
+  <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" /></symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" /></symbol>
+  <symbol id="icon-map-pin" viewBox="0 0 24 24"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></symbol>
+  <symbol id="icon-triangle-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></symbol>
+  <symbol id="icon-stethoscope" viewBox="0 0 24 24"><path d="M11 2v2" /><path d="M5 2v2" /><path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1" /><path d="M8 15a6 6 0 0 0 12 0v-3" /><circle cx="20" cy="10" r="2" /></symbol>
+  <symbol id="icon-soup" viewBox="0 0 24 24"><path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z" /><path d="M7 21h10" /><path d="M19.5 12 22 6" /><path d="M16.25 3c.27.1.8.53.75 1.36-.06.83-.93 1.2-1 2.02-.05.78.34 1.24.73 1.62" /><path d="M11.25 3c.27.1.8.53.74 1.36-.05.83-.93 1.2-.98 2.02-.06.78.33 1.24.72 1.62" /><path d="M6.25 3c.27.1.8.53.75 1.36-.06.83-.93 1.2-1 2.02-.05.78.34 1.24.74 1.62" /></symbol>
+  <symbol id="icon-package" viewBox="0 0 24 24"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" /><path d="M12 22V12" /><polyline points="3.29 7 12 12 20.71 7" /><path d="m7.5 4.27 9 5.15" /></symbol>
+  <symbol id="icon-baby" viewBox="0 0 24 24"><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5" /><path d="M15 12h.01" /><path d="M19.38 6.813A9 9 0 0 1 20.8 10.2a2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1" /><path d="M9 12h.01" /></symbol>
+  <symbol id="icon-dumbbell" viewBox="0 0 24 24"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z" /><path d="m2.5 21.5 1.4-1.4" /><path d="m20.1 3.9 1.4-1.4" /><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z" /><path d="m9.6 14.4 4.8-4.8" /></symbol>
+  <symbol id="icon-clipboard-list" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="M12 11h4" /><path d="M12 16h4" /><path d="M8 11h.01" /><path d="M8 16h.01" /></symbol>
+  <symbol id="icon-user-round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5" /><path d="M20 21a8 8 0 0 0-16 0" /></symbol>
+</svg>
+
 <header>
-  <div class="logo">🔥 CERM <span>/ Community Evacuation Resource Matcher</span></div>
+  <div class="logo"><svg class="icon"><use href="#icon-flame"/></svg> CERM <span>/ Community Evacuation Resource Matcher</span></div>
   <div class="county-tabs">
     <button class="county-tab active" onclick="flyToCounty('Butte')" aria-pressed="true">Butte</button>
     <button class="county-tab" onclick="flyToCounty('Shasta')" aria-pressed="false">Shasta</button>
@@ -458,13 +497,13 @@
 <div class="app-body">
   <!-- LEFT SIDEBAR -->
   <div class="sidebar" id="sidebar">
-    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" aria-label="Collapse sidebar">◀</button>
+    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" aria-label="Collapse sidebar"><svg class="icon"><use href="#icon-chevron-left"/></svg></button>
 
     <div class="role-selector">
       <h3>I am a...</h3>
       <div class="role-btns">
-        <button class="role-btn provider" id="btn-provider" onclick="setRole('provider')" aria-pressed="false">🤝 Helper</button>
-        <button class="role-btn requester" id="btn-requester" onclick="setRole('requester')" aria-pressed="false">🙋 Requester</button>
+        <button class="role-btn provider" id="btn-provider" onclick="setRole('provider')" aria-pressed="false"><svg class="icon"><use href="#icon-handshake"/></svg> Helper</button>
+        <button class="role-btn requester" id="btn-requester" onclick="setRole('requester')" aria-pressed="false"><svg class="icon"><use href="#icon-hand"/></svg> Requester</button>
       </div>
     </div>
 
@@ -490,7 +529,7 @@
     <!-- Fire warnings -->
     <div class="sidebar-fire-warnings visible" id="sidebar-fire-warnings">
       <div class="fire-warning-box">
-        🔥 <strong>3 Fire Zones Active</strong><br>
+        <svg class="icon"><use href="#icon-flame"/></svg> <strong>3 Fire Zones Active</strong><br>
         Butte: 15 tracts (2018 Camp Fire perimeter)<br>
         Shasta: Census Tract 121.02<br>
         Riverside: Census Tract 451.17<br>
@@ -508,7 +547,7 @@
           Requests <span class="tab-badge" id="requests-tab-badge">0</span>
         </button>
       </div>
-      <button class="results-close" onclick="closeResultsPanel()" aria-label="Close recommendations panel">✕</button>
+      <button class="results-close" onclick="closeResultsPanel()" aria-label="Close recommendations panel"><svg class="icon"><use href="#icon-x"/></svg></button>
     </div>
     <div class="results-tab-content active" id="tab-content-recs" aria-live="polite"></div>
     <div class="results-tab-content" id="tab-content-requests"></div>
@@ -526,7 +565,7 @@
   <div class="map-legend">
     <div class="legend-title">Map Legend</div>
     <div class="legend-row"><div class="legend-swatch" style="background:#b8c9d9"></div> Census tract</div>
-    <div class="legend-row"><div class="legend-swatch" style="background:#ff4500"></div> Fire zone</div>
+    <div class="legend-row"><div class="legend-swatch" style="background:#bc4c00"></div> Fire zone</div>
     <div class="legend-row"><div class="legend-swatch" style="border:3px solid #cf222e;background:#fff"></div> Suggested tract</div>
     <div class="legend-row"><div class="legend-swatch" style="background:#1a7f37"></div> Your selection</div>
   </div>
@@ -696,7 +735,7 @@ function setUserLocationPin(latLon, label) {
     className: 'user-pin',
     html: `<div style="display:flex;flex-direction:column;align-items:center;">
       <div style="background:var(--accent2);color:#fff;font-size:10px;padding:2px 6px;border-radius:4px;white-space:nowrap;font-family:var(--font-sans);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.2);">${label}</div>
-      <div style="font-size:24px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));">📍</div>
+      <svg class="icon" style="width:26px;height:26px;color:var(--accent2);fill:var(--accent2);stroke:#fff;stroke-width:1.5;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));"><use href="#icon-map-pin"/></svg>
     </div>`,
     iconSize: [80, 40], iconAnchor: [40, 40]
   });
@@ -705,14 +744,14 @@ function setUserLocationPin(latLon, label) {
 
 function getFillColor(t) {
   const fireGeoids = new Set(Object.values(FIRE_TRACTS).flat());
-  if (fireGeoids.has(t.geoid)) return '#ff4500';
+  if (fireGeoids.has(t.geoid)) return '#bc4c00';
   if (selectedTracts.has(t.geoid)) return '#1a7f37';
   return '#b8c9d9';
 }
 
 function getFillOpacity(t) {
   const fireGeoids = new Set(Object.values(FIRE_TRACTS).flat());
-  if (fireGeoids.has(t.geoid)) return 0.55;
+  if (fireGeoids.has(t.geoid)) return 0.42;
   if (selectedTracts.has(t.geoid)) return 0.35;
   return 0.25;
 }
@@ -739,16 +778,16 @@ function buildPopup(t) {
              border:1px solid ${isSelected ? 'var(--text-muted)' : 'var(--green)'};
              background:transparent;color:${isSelected ? 'var(--text-muted)' : 'var(--green)'};
              font-family:var(--font-mono);font-size:11px;cursor:pointer;">
-      ${isSelected ? '✓ Deselect tract' : '+ Select — I will go here'}
+      ${isSelected ? '<svg class="icon"><use href="#icon-check"/></svg> Deselect tract' : '+ Select — I will go here'}
     </button>` : '';
   return `
     <div class="popup-title">${t.name.split(';')[0]}</div>
     <div class="popup-stat">County: <span>${t.county}</span></div>
     <div class="popup-stat">Population: <span>${t.pop.toLocaleString()}</span></div>
-    <div class="popup-stat">👴 Elderly: <span>${elderly.toLocaleString()} (${t.pct_elderly}%)</span></div>
-    <div class="popup-stat">♿ Disability: <span>${disability.toLocaleString()} (${t.pct_disability}%)</span></div>
-    <div class="popup-stat">🚗 No vehicle: <span>${novehicle.toLocaleString()} (${t.pct_novehicle}%)</span></div>
-    ${isFire ? '<div class="popup-fire">🔥 FIRE ZONE — functions disabled</div>' : `<div class="popup-hands" tabindex="0" role="button" onclick="map.closePopup(); showRequestsTab('${t.geoid}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();map.closePopup();showRequestsTab('${t.geoid}');}" style="cursor:pointer;text-decoration:underline;" title="Click to view requests">🙋 Active requests: ${hands} ▾</div>`}
+    <div class="popup-stat"><svg class="icon"><use href="#icon-user-round"/></svg> Elderly: <span>${elderly.toLocaleString()} (${t.pct_elderly}%)</span></div>
+    <div class="popup-stat"><svg class="icon"><use href="#icon-accessibility"/></svg> Disability: <span>${disability.toLocaleString()} (${t.pct_disability}%)</span></div>
+    <div class="popup-stat"><svg class="icon"><use href="#icon-car"/></svg> No vehicle: <span>${novehicle.toLocaleString()} (${t.pct_novehicle}%)</span></div>
+    ${isFire ? '<div class="popup-fire"><svg class="icon"><use href="#icon-flame"/></svg> FIRE ZONE — functions disabled</div>' : `<div class="popup-hands" tabindex="0" role="button" onclick="map.closePopup(); showRequestsTab('${t.geoid}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();map.closePopup();showRequestsTab('${t.geoid}');}" style="cursor:pointer;text-decoration:underline;" title="Click to view requests"><svg class="icon"><use href="#icon-hand"/></svg> Active requests: ${hands} ▾</div>`}
     ${selectBtn}
   `;
 }
@@ -824,10 +863,10 @@ function renderMap() {
           <div style="font-family:var(--font-sans);font-size:12px;line-height:1.6;min-width:160px;">
             <strong style="color:var(--accent2);">${t.name.split(';')[0]}</strong><br>
             ${t.county} County &bull; Pop ${t.pop.toLocaleString()}<br>
-            <span style="color:#656d76;">👴 Elderly:</span> ${elderly.toLocaleString()} (${t.pct_elderly}%)<br>
-            <span style="color:#656d76;">♿ Disability:</span> ${disability.toLocaleString()} (${t.pct_disability}%)<br>
-            <span style="color:#656d76;">🚗 No vehicle:</span> ${novehicle.toLocaleString()} (${t.pct_novehicle}%)<br>
-            ${isFire ? '<span style="color:#ff4500;font-weight:600;">🔥 Fire Zone</span>' : `<span style="color:#0969da;">🙋 ${hands} active request${hands !== 1 ? 's' : ''}</span>`}
+            <span style="color:#656d76;"><svg class="icon"><use href="#icon-user-round"/></svg> Elderly:</span> ${elderly.toLocaleString()} (${t.pct_elderly}%)<br>
+            <span style="color:#656d76;"><svg class="icon"><use href="#icon-accessibility"/></svg> Disability:</span> ${disability.toLocaleString()} (${t.pct_disability}%)<br>
+            <span style="color:#656d76;"><svg class="icon"><use href="#icon-car"/></svg> No vehicle:</span> ${novehicle.toLocaleString()} (${t.pct_novehicle}%)<br>
+            ${isFire ? '<span style="color:#bc4c00;font-weight:600;"><svg class="icon"><use href="#icon-flame"/></svg> Fire Zone</span>' : `<span style="color:#0969da;"><svg class="icon"><use href="#icon-hand"/></svg> ${hands} active request${hands !== 1 ? 's' : ''}</span>`}
           </div>
         `, { sticky: true, direction: 'top', offset: [0, -10], className: 'tract-tooltip' }).openTooltip();
       });
@@ -864,7 +903,7 @@ function renderHandsMarkers() {
 
     const icon = L.divIcon({
       className: 'hands-marker',
-      html: `<div class="hands-bubble${isFire ? ' fire' : (isOwnTract ? ' requester-own' : '')}">${isFire ? '🔥' : count}</div>`,
+      html: `<div class="hands-bubble${isFire ? ' fire' : (isOwnTract ? ' requester-own' : '')}">${isFire ? '<svg class="icon" style="width:14px;height:14px;"><use href="#icon-flame"/></svg>' : count}</div>`,
       iconSize: [28, 28], iconAnchor: [14, 14]
     });
     const m = L.marker([t.clat, t.clon], { icon, bubblingMouseEvents: false, interactive: true }).addTo(map);
@@ -908,7 +947,7 @@ function showFireZoneMessage(t) {
 
   recsContent.innerHTML = `
     <div style="text-align:center;padding:24px 16px;">
-      <div style="font-size:32px;margin-bottom:12px;">🔥</div>
+      <div style="margin-bottom:12px;"><svg class="icon" style="width:32px;height:32px;color:#bc4c00;"><use href="#icon-flame"/></svg></div>
       <div style="font-weight:600;color:var(--red);font-size:14px;margin-bottom:8px;">${t.name.split(';')[0]}</div>
       <div style="color:var(--text-muted);font-size:12px;line-height:1.6;">
         Functionality for this tract is disabled since this is designated as a fire-evacuation area. Please contact <strong style="color:var(--text);">911</strong> for emergency help.
@@ -995,7 +1034,9 @@ function toggleSidebar() {
   const btn = document.getElementById('sidebar-toggle');
   sidebar.classList.toggle('collapsed');
   const collapsed = sidebar.classList.contains('collapsed');
-  btn.textContent = collapsed ? '▶' : '◀';
+  btn.innerHTML = collapsed
+    ? '<svg class="icon"><use href="#icon-chevron-right"/></svg>'
+    : '<svg class="icon"><use href="#icon-chevron-left"/></svg>';
   btn.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
   setTimeout(() => map.invalidateSize(), 300);
 }
@@ -1010,7 +1051,9 @@ function setRole(role) {
   document.getElementById('btn-requester').classList.toggle('active', role === 'requester');
   document.getElementById('btn-requester').setAttribute('aria-pressed', role === 'requester');
   document.getElementById('role-badge-header').className = `role-badge ${role}`;
-  document.getElementById('role-badge-header').textContent = role === 'provider' ? '🤝 Helper' : '🙋 Requester';
+  document.getElementById('role-badge-header').innerHTML = role === 'provider'
+    ? '<svg class="icon"><use href="#icon-handshake"/></svg> Helper'
+    : '<svg class="icon"><use href="#icon-hand"/></svg> Requester';
 
   const resArea = document.getElementById('resource-input-area');
   const textarea = document.getElementById('resource-textarea');
@@ -1330,14 +1373,14 @@ function updateRequestsTabContent(geoid) {
       // Clear filters button
       const clearBtn = document.createElement('span');
       clearBtn.className = 'filter-tag clear-btn';
-      clearBtn.textContent = '✕ Clear filters';
+      clearBtn.innerHTML = '<svg class="icon"><use href="#icon-x"/></svg> Clear filters';
       clearBtn.onclick = () => { activeRequestFilter = null; updateRequestsTabContent(geoid); };
       filterBar.appendChild(clearBtn);
       // One pill per tag
       tractTags.forEach(tag => {
         const pill = document.createElement('span');
         pill.className = `filter-tag${activeRequestFilter === tag ? ' active' : ''}`;
-        pill.textContent = TAG_LABELS[tag] || tag;
+        pill.innerHTML = TAG_LABELS[tag] || tag;
         pill.onclick = () => {
           activeRequestFilter = activeRequestFilter === tag ? null : tag;
           updateRequestsTabContent(geoid);
@@ -1379,7 +1422,7 @@ function updateRequestsTabContent(geoid) {
       html += `<div class="req-type" style="${isOwn ? 'color:var(--red);' : ''}">${r.type}${isOwn ? ' (your request)' : ''} <span class="req-status ${status}">${statusLabel}</span></div>`;
       html += `<div class="req-text" style="${isOwn ? 'color:var(--red);' : ''}">${r.text}</div>`;
       if (r.address) {
-        html += `<div class="req-address">📍 ${r.address}</div>`;
+        html += `<div class="req-address"><svg class="icon"><use href="#icon-map-pin"/></svg> ${r.address}</div>`;
       }
 
       // Action buttons based on role
@@ -1387,10 +1430,10 @@ function updateRequestsTabContent(geoid) {
       if (isRequesterMode && isOwn) {
         // Requester can cancel (if not solved) or mark solved (if in-progress)
         if (status !== 'solved') {
-          html += `<button class="req-action-btn cancel" onclick="event.stopPropagation(); removeOwnRequest('${geoid}', '${r.request_id}')">✕ Cancel</button>`;
+          html += `<button class="req-action-btn cancel" onclick="event.stopPropagation(); removeOwnRequest('${geoid}', '${r.request_id}')"><svg class="icon"><use href="#icon-x"/></svg> Cancel</button>`;
         }
         if (status === 'in-progress') {
-          html += `<button class="req-action-btn solve" onclick="event.stopPropagation(); markRequestSolved('${geoid}', '${r.request_id}')">✓ Mark Solved</button>`;
+          html += `<button class="req-action-btn solve" onclick="event.stopPropagation(); markRequestSolved('${geoid}', '${r.request_id}')"><svg class="icon"><use href="#icon-check"/></svg> Mark Solved</button>`;
         }
       } else if (!isRequesterMode) {
         // Helper can accept (unsolved → in-progress) or solve (in-progress → solved)
@@ -1398,7 +1441,7 @@ function updateRequestsTabContent(geoid) {
           html += `<button class="req-action-btn accept" onclick="event.stopPropagation(); acceptRequest('${geoid}', '${r.request_id}')">Accept</button>`;
         }
         if (status === 'in-progress') {
-          html += `<button class="req-action-btn solve" onclick="event.stopPropagation(); markRequestSolved('${geoid}', '${r.request_id}')">✓ Mark Solved</button>`;
+          html += `<button class="req-action-btn solve" onclick="event.stopPropagation(); markRequestSolved('${geoid}', '${r.request_id}')"><svg class="icon"><use href="#icon-check"/></svg> Mark Solved</button>`;
         }
       }
       html += '</div>';
@@ -1474,14 +1517,14 @@ function markRequestSolved(geoid, requestId) {
 
 // ===== TAG HELPERS =====
 const TAG_LABELS = {
-  transportation: '🚗 Transport',
-  medical: '🏥 Medical',
-  food_distribution: '🍲 Food & Water',
-  volunteer_labor: '🧰 Supplies',
-  mobility_assistance: '♿ Mobility',
-  childcare: '👶 Childcare',
-  heavy_lifting: '💪 Heavy Lifting',
-  general: '📋 General'
+  transportation: '<svg class="icon"><use href="#icon-car"/></svg> Transport',
+  medical: '<svg class="icon"><use href="#icon-stethoscope"/></svg> Medical',
+  food_distribution: '<svg class="icon"><use href="#icon-soup"/></svg> Food & Water',
+  volunteer_labor: '<svg class="icon"><use href="#icon-package"/></svg> Supplies',
+  mobility_assistance: '<svg class="icon"><use href="#icon-accessibility"/></svg> Mobility',
+  childcare: '<svg class="icon"><use href="#icon-baby"/></svg> Childcare',
+  heavy_lifting: '<svg class="icon"><use href="#icon-dumbbell"/></svg> Heavy Lifting',
+  general: '<svg class="icon"><use href="#icon-clipboard-list"/></svg> General'
 };
 
 const TYPE_TO_SERVICE_TAG = {
@@ -1594,11 +1637,11 @@ function renderRecommendations(tracts, n) {
         </div>
       </div>
       <div class="tract-stats">
-        <span class="stat-pill hands" tabindex="0" role="button" onclick="event.stopPropagation(); showRequestsTab('${t.geoid}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();showRequestsTab('${t.geoid}');}" title="Click to see requests">🙋 ${hands} requests ▾</span>
+        <span class="stat-pill hands" tabindex="0" role="button" onclick="event.stopPropagation(); showRequestsTab('${t.geoid}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();showRequestsTab('${t.geoid}');}" title="Click to see requests"><svg class="icon"><use href="#icon-hand"/></svg> ${hands} requests ▾</span>
       </div>
       ${tractTags.length > 0 ? `<div style="margin-top:6px;line-height:1.8;">${renderTagPills(tractTags)}</div>` : ''}
       ${renderScoreBreakdown(t)}
-      ${isSelected ? '<div style="font-size:11px;color:var(--green);font-family:var(--font-mono);margin-top:6px;">✓ Selected on map</div>' : '<div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Click to zoom, then select on map</div>'}
+      ${isSelected ? '<div style="font-size:11px;color:var(--green);font-family:var(--font-mono);margin-top:6px;"><svg class="icon"><use href="#icon-check"/></svg> Selected on map</div>' : '<div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Click to zoom, then select on map</div>'}
     `;
     // Clicking (or activating via keyboard) the card flies the map and updates requests tab content (without switching to it)
     const activateCard = () => {
@@ -1810,7 +1853,7 @@ async function handleRequesterSubmission(text) {
       const statusDiv = document.getElementById('sidebar-status');
       const tagsDiv = document.getElementById('parsed-tags');
       statusDiv.classList.add('visible');
-      document.querySelector('#sidebar-status h4').textContent = '⚠️ Fire-Evacuation Zone';
+      document.querySelector('#sidebar-status h4').innerHTML = '<svg class="icon"><use href="#icon-triangle-alert"/></svg> Fire-Evacuation Zone';
       tagsDiv.innerHTML = `
         <div style="font-size:12px;line-height:1.6;color:var(--text-muted);">
           Your location falls within a designated <strong style="color:var(--red);">fire-evacuation area</strong> (${nearestTract.name.split(';')[0]}).
@@ -1884,7 +1927,7 @@ async function handleSend() {
   const loc = locInput.value.trim();
   if (!loc) {
     locInput.style.borderColor = '#cf222e';
-    locInput.placeholder = '⚠ Please enter your full address first';
+    locInput.placeholder = 'Please enter your full address first';
     locInput.focus();
     setTimeout(() => {
       locInput.style.borderColor = '';
