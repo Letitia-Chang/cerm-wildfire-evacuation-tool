@@ -69,6 +69,12 @@
   /* MAP */
   #map { flex: 1; height: 100%; }
   .leaflet-container { background: #f6f8fa !important; }
+  .leaflet-control-attribution {
+    font-family: var(--font-sans) !important; font-size: 10px !important;
+    background: rgba(255,255,255,0.8) !important; color: var(--text-muted) !important;
+    padding: 1px 6px !important;
+  }
+  .leaflet-control-attribution a { color: var(--text-muted) !important; }
   /* Leaflet gives every interactive polygon tabindex="0"; the browser's default
      focus ring then draws a rectangle around the SVG bounding box instead of
      following the polygon shape. Suppress it and use a shape-following glow
@@ -358,13 +364,15 @@
   #map { position: relative; }
   .map-legend {
     position: absolute; bottom: 20px; left: 20px; z-index: 999;
-    background: rgba(255,255,255,0.95); border: 1px solid var(--border);
-    border-radius: 8px; padding: 12px 14px; backdrop-filter: blur(8px);
-    min-width: 160px;
+    background: rgba(255,255,255,0.97); border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    border-radius: 8px; padding: 12px 14px 12px 12px; backdrop-filter: blur(8px);
+    min-width: 170px;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.14);
   }
-  .legend-title { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 8px; }
-  .legend-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; font-size: 12px; color: var(--text); }
-  .legend-swatch { width: 14px; height: 14px; border-radius: 2px; flex-shrink: 0; }
+  .legend-title { font-family: var(--font-sans); font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 8px; }
+  .legend-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; color: var(--text); }
+  .legend-swatch { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
 
   .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); animation: pulse 1.2s infinite; }
   .dot:nth-child(2) { animation-delay: 0.2s; }
@@ -404,16 +412,26 @@
   .hands-marker {
     background: transparent; border: none;
   }
+  /* Teardrop pin: a rotated rounded square with one sharp corner forms the
+     point; the count label counter-rotates back to horizontal so it reads
+     normally inside the circular head of the pin. */
   .hands-bubble {
-    background: rgba(9,105,218,0.9); color: #ffffff;
-    border-radius: 50%; width: 28px; height: 28px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+    width: 26px; height: 26px;
+    background: var(--accent2);
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
     border: 2px solid white; cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+    position: relative;
   }
-  .hands-bubble.fire { background: rgba(188,76,0,0.85); color: white; }
-  .hands-bubble.requester-own { background: rgba(207,34,46,0.95); color: white; border-color: #ff6b6b; }
+  .hands-bubble-label {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    color: #fff; font-family: var(--font-sans); font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hands-bubble.fire { background: var(--fire); }
+  .hands-bubble.requester-own { background: var(--red); border-color: #ff9b9b; }
 
   .provider-selected-marker {
     background: rgba(26,127,55,0.15) !important;
@@ -716,11 +734,12 @@ const map = L.map('map', {
   center: [39.677, -121.722],
   zoom: 10,
   zoomControl: true,
-  attributionControl: false
+  attributionControl: true
 });
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-  maxZoom: 19, subdomains: 'abcd'
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  maxZoom: 19, subdomains: 'abcd',
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
 }).addTo(map);
 
 // Track which tracts are currently recommended
@@ -903,8 +922,8 @@ function renderHandsMarkers() {
 
     const icon = L.divIcon({
       className: 'hands-marker',
-      html: `<div class="hands-bubble${isFire ? ' fire' : (isOwnTract ? ' requester-own' : '')}">${isFire ? '<svg class="icon" style="width:14px;height:14px;"><use href="#icon-flame"/></svg>' : count}</div>`,
-      iconSize: [28, 28], iconAnchor: [14, 14]
+      html: `<div class="hands-bubble${isFire ? ' fire' : (isOwnTract ? ' requester-own' : '')}"><span class="hands-bubble-label">${isFire ? '<svg class="icon" style="width:13px;height:13px;"><use href="#icon-flame"/></svg>' : count}</span></div>`,
+      iconSize: [30, 30], iconAnchor: [15, 28]
     });
     const m = L.marker([t.clat, t.clon], { icon, bubblingMouseEvents: false, interactive: true }).addTo(map);
     // Clicking the hands bubble opens the requests panel for this tract
