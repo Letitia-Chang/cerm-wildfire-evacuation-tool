@@ -372,7 +372,9 @@
   }
   .legend-title { font-family: var(--font-sans); font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 8px; }
   .legend-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; color: var(--text); }
-  .legend-swatch { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+  /* Rounded square, not a circle: every legend item here represents a
+     census-tract polygon fill/border on the map, not a point marker. */
+  .legend-swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
 
   .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); animation: pulse 1.2s infinite; }
   .dot:nth-child(2) { animation-delay: 0.2s; }
@@ -417,7 +419,8 @@
      normally inside the circular head of the pin. */
   .hands-bubble {
     width: 26px; height: 26px;
-    background: var(--accent2);
+    background: #4a90e2;
+    opacity: 0.78;
     border-radius: 50% 50% 50% 0;
     transform: rotate(-45deg);
     border: 2px solid white; cursor: pointer;
@@ -652,6 +655,19 @@ const COUNTY_CENTERS = {
   'Riverside': [33.802, -117.007]
 };
 
+// Pre-filled so a first-time visitor can hit SUBMIT immediately and see the
+// flow work. Real, geocodable addresses already used elsewhere in the demo data.
+const COUNTY_DEFAULT_ADDRESS = {
+  'Butte':     'Chico Branch Library, 1108 Sherman Ave, Chico, CA',
+  'Shasta':    'Redding Library, 1100 Parkview Ave, Redding, CA',
+  'Riverside': 'Riverside Public Library, 3581 Mission Inn Ave, Riverside, CA'
+};
+
+const DEFAULT_RESOURCE_TEXT = {
+  provider: 'I have a car and can help with transportation, plus bottled water and blankets to share.',
+  requester: 'I need a ride to the evacuation shelter and could use some water and food.'
+};
+
 const COUNTY_ZOOM = { 'Butte': 11, 'Shasta': 11, 'Riverside': 10 };
 
 const tractByGeoid = {};
@@ -771,13 +787,16 @@ function getFillColor(t) {
 function getFillOpacity(t) {
   const fireGeoids = new Set(Object.values(FIRE_TRACTS).flat());
   if (fireGeoids.has(t.geoid)) return 0.42;
-  if (selectedTracts.has(t.geoid)) return 0.35;
+  if (selectedTracts.has(t.geoid)) return 0.55;
   return 0.25;
 }
 
 function getBorderStyle(t) {
   if (recommendedGeoids.has(t.geoid)) {
     return { color: '#cf222e', weight: 3, opacity: 1 };
+  }
+  if (selectedTracts.has(t.geoid)) {
+    return { color: '#1a7f37', weight: 2.5, opacity: 1 };
   }
   return { color: '#d0d7de', weight: 0.5, opacity: 0.8 };
 }
@@ -1090,12 +1109,23 @@ function setRole(role) {
     textarea.setAttribute('aria-label', 'Describe what you need');
   }
 
-  // Clear text input when switching roles
-  textarea.value = '';
+  // Pre-fill with a working example on role switch, so a first-time visitor
+  // can hit SUBMIT immediately and see the matching flow without having to
+  // write anything themselves.
+  textarea.value = DEFAULT_RESOURCE_TEXT[role];
+  setDefaultLocationIfUnset();
 
   // Close results panel when switching roles
   closeResultsPanel();
   document.getElementById('sidebar-status').classList.remove('visible');
+}
+
+// Fills the address field with the current county's example address, unless
+// the user has already typed something real of their own.
+function setDefaultLocationIfUnset() {
+  const locInput = document.getElementById('location-input');
+  const isDefault = !locInput.value || Object.values(COUNTY_DEFAULT_ADDRESS).includes(locInput.value);
+  if (isDefault) locInput.value = COUNTY_DEFAULT_ADDRESS[currentCounty];
 }
 
 // ===== DEEPSEEK LLM CALL =====
@@ -1984,6 +2014,7 @@ function flyToCounty(county) {
   map.flyTo(center, zoom, { duration: 1.5 });
   renderHandsMarkers();
   closeResultsPanel();
+  setDefaultLocationIfUnset();
 }
 
 // ===== GEOCODE ADDRESS VIA NOMINATIM =====
