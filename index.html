@@ -1413,6 +1413,21 @@ function updateRequestsTabContent(geoid) {
   }
   freshContent.appendChild(headerDiv);
 
+  // Let a Helper commit to a tract from here — this is the only reachable
+  // path to it now that tract clicks open this panel instead of a map popup.
+  if (!isRequesterMode) {
+    const fireGeoids = new Set(Object.values(FIRE_TRACTS).flat());
+    if (!fireGeoids.has(geoid)) {
+      const isSelected = selectedTracts.has(geoid);
+      const selectBtn = document.createElement('button');
+      selectBtn.className = `select-tract-btn${isSelected ? ' deselect' : ''}`;
+      selectBtn.innerHTML = isSelected
+        ? '<svg class="icon"><use href="#icon-check"/></svg> Deselect tract'
+        : '<svg class="icon"><use href="#icon-map-pin"/></svg> Select — I will go here';
+      selectBtn.onclick = () => selectTractFromPanel(geoid);
+      freshContent.appendChild(selectBtn);
+    }
+  }
 
   // Hide filters and categories in requester mode
   if (!isRequesterMode) {
@@ -1692,7 +1707,7 @@ function renderRecommendations(tracts, n) {
       </div>
       ${tractTags.length > 0 ? `<div style="margin-top:6px;line-height:1.8;">${renderTagPills(tractTags)}</div>` : ''}
       ${renderScoreBreakdown(t)}
-      ${isSelected ? '<div style="font-size:11px;color:var(--green);font-family:var(--font-mono);margin-top:6px;"><svg class="icon"><use href="#icon-check"/></svg> Selected on map</div>' : '<div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Click to zoom, then select on map</div>'}
+      ${isSelected ? '<div style="font-size:11px;color:var(--green);font-family:var(--font-mono);margin-top:6px;"><svg class="icon"><use href="#icon-check"/></svg> Selected on map</div>' : '<div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Click to zoom and select</div>'}
     `;
     // Clicking (or activating via keyboard) the card flies the map and updates requests tab content (without switching to it)
     const activateCard = () => {
@@ -1751,6 +1766,12 @@ function toggleSelectTract(geoid) {
     card.classList.toggle('selected', selectedTracts.has(geoid));
   }
   renderMap();
+}
+
+// Called from the "Select — I will go here" button in the requests panel.
+function selectTractFromPanel(geoid) {
+  toggleSelectTract(geoid);
+  updateRequestsTabContent(geoid);
 }
 
 // Update card visual state when tracts are selected via map
