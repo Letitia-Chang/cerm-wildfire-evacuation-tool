@@ -588,6 +588,7 @@
     <div class="legend-row"><div class="legend-swatch" style="background:#b8c9d9"></div> Census tract</div>
     <div class="legend-row"><div class="legend-swatch" style="background:#bc4c00"></div> Fire zone</div>
     <div class="legend-row"><div class="legend-swatch" style="border:3px solid #cf222e;background:#fff"></div> Suggested tract</div>
+    <div class="legend-row"><div class="legend-swatch" style="background:#4a90e2"></div> Viewing</div>
     <div class="legend-row"><div class="legend-swatch" style="background:#1a7f37"></div> Your selection</div>
   </div>
   </div><!-- /map-wrapper -->
@@ -879,8 +880,9 @@ function renderMap() {
         // In requester mode, only allow clicking own tracts
         if (currentRole === 'requester' && !mySubmittedGeoids.has(t.geoid)) return;
 
-        // Darken the clicked tract (persistent highlight)
-        layer.setStyle({ fillOpacity: 0.4, weight: 1.5, color: '#9ca3af' });
+        // Highlight the clicked tract (persistent until another tract is
+        // clicked or the panel is closed) — matches the "Viewing" legend row.
+        layer.setStyle({ fillColor: '#4a90e2', fillOpacity: 0.5, weight: 2, color: '#2b6cb0' });
         clickedTractLayer = { layer, tract: t };
 
         // Show requests panel for this tract
