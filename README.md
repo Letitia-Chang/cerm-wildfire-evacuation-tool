@@ -112,50 +112,9 @@ Future versions of the system will strengthen these protections further:
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    subgraph Pipeline["Offline data pipeline (notebooks/WiDS_Community_Matching.ipynb)"]
-        ACS["US Census ACS API\n(demographics)"] --> Clean
-        TIGER["TIGER/Line shapefiles\n(tract boundaries)"] --> Clean
-        Clean["pandas + geopandas\ncleaning, spatial join,\nvulnerability flags"] --> Data
-        Data[("data/wildfire_community_tracts\n.csv + .geojson")]
-    end
+![CERM architecture](images/architecture.svg)
 
-    subgraph Eval["Evaluation notebooks (parallel, read-only)"]
-        Ranker["matching_model_evaluation.ipynb\nlearned ranker vs formula,\nLLM tagger vs fallback"]
-        Metrics["performance_metrics_dashboard.ipynb\ndiscrete-event simulation,\nRequest Alignment + Demand Coverage"]
-        CampFire["camp_fire_backtest.ipynb\nreal 2018 Camp Fire perimeter\nvs tract boundaries"]
-    end
-
-    subgraph Browser["Live browser app (index.html, GitHub Pages)"]
-        Map["Leaflet map UI"]
-        Fire["FIRE_TRACTS exclusion\n(real 15-tract Camp Fire\nperimeter for Butte)"]
-        Engine["Matching engine\n(vFit, rVol, reqMatch, prox)"]
-        Fallback["Rule-based JS\ntag fallback"]
-    end
-
-    FRAP["CAL FIRE FRAP\nhistorical perimeter API"] --> CampFire
-    Requests[("data/requests.csv\nsimulated requests")]
-
-    Data --> Ranker
-    Data --> Metrics
-    Data --> CampFire
-    Data --> Map
-    Requests --> Map
-    Requests --> Metrics
-
-    CampFire -. sourced perimeter .-> Fire
-    Fire --> Engine
-
-    Map -- free text --> Proxy["Vercel serverless proxy"]
-    Ranker -- eval calls --> Proxy
-    Proxy --> LLM["DeepSeek-V3-0324"]
-    LLM -- structured tags --> Map
-    Proxy -. on failure .-> Fallback
-    Fallback --> Engine
-    Map --> Engine
-    Engine -- ranked tracts --> Map
-```
+Offline (green): the data pipeline notebook and the three evaluation notebooks all run once, independently, and never touch the live site. Live (blue): the deployed `index.html` — free text goes straight to the Vercel proxy (not through the matching engine), and only the resulting tags feed the engine; a proxy or LLM failure falls back to the rule-based extractor instead. Gray: committed data files. Note that only `data/wildfire_community_tracts.geojson` is fetched by the browser (the `.csv` is notebook-only), and `data/requests.csv` holds the simulated seed data only — a user's own submission during a session lives in memory and isn't written back to the file.
 
 ## Setup Instructions
 
