@@ -306,6 +306,14 @@ Found during a live-demo walkthrough, reproducible on every page load. Clicking 
 - Add production telemetry (timestamps, signup/session logs) so Evacuation Efficiency and the adoption metrics can finally be computed for real
 - Reconsider whether `vFit`'s three flags should be weighted independently, given the Camp Fire backtest found disability and no-vehicle rates don't carry the same signal elderly rate does in at least one real event
 
+**To be implemented (testing gaps, not yet verified)**
+
+A live walkthrough on 2026-07-11 confirmed the golden paths work and caught the two real bugs logged in [6.10](#610-a-zero-results-helper-search-silently-froze-the-ui) and [6.11](#611-selecting-a-role-clipped-the-sidebars-own-labels), but it stopped short of full coverage. What's still untested:
+- **The live LLM path itself.** Every test submission used one of the two pre-filled default texts, and in both cases the network log showed zero calls to the Vercel proxy — the rule-based fallback extractor handled tagging silently both times. That's working as designed (the fallback exists precisely so a proxy outage doesn't break the demo), but it means the DeepSeek-V3 tagging path — arbitrary free-text input, actual API latency, real misclassification behavior — has not actually been exercised.
+- **The fire-zone exclusion path.** The UI displays disabled fire-zone tracts and the app-level constant `FIRE_TRACTS` excludes them from `scoreTracts()`, but no test has confirmed end-to-end that a request originating from inside a fire tract is actually redirected to 911/emergency-services messaging rather than silently matched or silently dropped.
+- **Cross-browser and accessibility testing.** All verification this session ran through a single Chromium-based automated browser. No manual pass in Safari or Firefox, and no screen-reader testing, despite the accessibility pass noted in the task history above.
+- **The pre-existing limitations list above is unchanged by this session's fixes** — in particular `FIRE_TRACTS['Shasta']` and `['Riverside']` are still single-tract placeholders (not real perimeters, unlike Butte's), there is still no backend/persistence, and the scoring weights are still static rather than learned.
+
 ---
 
 ## 8. Repository Structure
