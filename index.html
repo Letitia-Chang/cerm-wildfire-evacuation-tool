@@ -91,13 +91,13 @@
     background: var(--panel);
     border-right: 1px solid var(--border);
     display: flex; flex-direction: column;
-    overflow-y: auto;
     transition: width 0.25s ease, opacity 0.25s ease;
     position: relative;
   }
   .sidebar.collapsed { width: 0; overflow: hidden; opacity: 0; padding: 0; }
+  .sidebar-scroll { flex: 1; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; }
   .sidebar-toggle {
-    position: absolute; top: 10px; right: -32px; z-index: 1001;
+    position: absolute; top: 90px; right: -32px; z-index: 1001;
     width: 28px; height: 28px; border-radius: 0 6px 6px 0;
     background: var(--panel); border: 1px solid var(--border); border-left: none;
     color: var(--text-muted); cursor: pointer; font-size: 14px;
@@ -520,6 +520,7 @@
   <div class="sidebar" id="sidebar">
     <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" aria-label="Collapse sidebar"><svg class="icon"><use href="#icon-chevron-left"/></svg></button>
 
+    <div class="sidebar-scroll">
     <div class="role-selector">
       <h3>I am a...</h3>
       <div class="role-btns">
@@ -556,6 +557,7 @@
         Riverside: Census Tract 451.17<br>
         <span style="font-size:11px;color:#656d76;">These tracts are disabled.</span>
       </div>
+    </div>
     </div>
   </div>
 
