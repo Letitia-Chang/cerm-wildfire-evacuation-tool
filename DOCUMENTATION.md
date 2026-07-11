@@ -277,6 +277,10 @@ A first-time visitor landed on an empty address field and an empty resource/need
 
 `notebooks/WiDS_Community_Matching.ipynb`'s Section 9 markdown stated the vulnerability flags were "not used in our final solution" and included only "as an exploratory tool" — while the same notebook's own Section 13 summary, in its "Downstream Handoffs" list, correctly stated that the LLM matching pipeline "consumes `wildfire_community_tracts.csv` to classify helper offers and match them to highest-need tracts by flag profile." The notebook disagreed with itself. Section 9's note has been rewritten to correctly describe the flags as the direct `vFit` input to the live matching engine, cross-referencing Section 13 instead of contradicting it.
 
+### 6.10 A zero-results Helper search silently froze the UI
+
+Found during a full-repo error audit, not from a user report. When a Helper's search matched zero candidate tracts, the code tried to write into `document.getElementById('results-list')` — an element that doesn't exist anywhere in the DOM (the real container everywhere else in the app is `tab-content-recs`). That threw an uncaught `TypeError`, which meant the function returned before it could reset `isProcessing` or re-enable the submit button. In practice this left the "No matching tracts found" message never shown, and the submit button permanently disabled with no error visible to the user. Fixed to use the correct element and to run the same panel/tab setup `renderRecommendations()` already does elsewhere. With the current three-county data this specific path is hard to trigger through normal typing (it requires an entire county's candidate set to be empty, which is more plausible from a fetch failure on page load than from any text a helper could type), but the failure mode — an uncaught exception silently disabling the only way to try again — was real regardless of how often it fires.
+
 ---
 
 ## 7. Limitations and Future Work
