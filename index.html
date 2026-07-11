@@ -1871,9 +1871,13 @@ async function handleProviderSubmission(text) {
   `;
 
   if (recommendedTracts.length === 0) {
-    const list = document.getElementById('results-list');
-    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);">No matching tracts found. Try switching counties.</div>';
     document.getElementById('results-panel').classList.add('visible');
+    document.getElementById('tab-recs').style.display = '';
+    document.getElementById('tab-requests').style.display = 'none';
+    switchResultsTab('recs');
+    document.getElementById('results-show-more').style.display = 'none';
+    document.getElementById('tab-content-recs').innerHTML =
+      '<div style="padding:20px;text-align:center;color:var(--text-muted);">No matching tracts found. Try switching counties.</div>';
   } else {
     renderRecommendations(recommendedTracts, numToShow);
   }
