@@ -276,7 +276,7 @@ The system has the potential to:
 The write-up above accompanied a Kaggle-hosted datathon submission with the following supporting materials, included in [`reports/`](reports/):
 
 - [Technical Presentation](<reports/Technical Presentation - Georgia Tech.pdf>)
-- [Solution Pitch Deck](<reports/Solution Pitch - Georgia Tech.pptx.pdf>)
+- [Solution Pitch Deck](<reports/Solution Pitch - Georgia Tech.pdf>)
 - [Poster](<reports/Poster - Georgia Tech.docx>)
 
 ## Team
@@ -288,7 +288,7 @@ The write-up above accompanied a Kaggle-hosted datathon submission with the foll
 | Name             | Contributions                                                                  |
 |------------------|--------------------------------------------------------------------------------|
 | Riya Bharathwaj  | EDA, Feature engineering, modeling, building solution, presentation prep       |
-| Ting-ya Chang    | EDA, geospatial joins, Research/Outreach, building solution, presentation prep |
+| Ting-Ya Chang    | EDA, geospatial joins, Research/Outreach, building solution, presentation prep |
 | Saehee Eom       | EDA, Feature engineering, modeling, building solution, presentation prep       |
 | Tanmayee Kolli   | EDA, Research/Outreach, building solution, presentation prep                   |
 | Simran Mallik    | EDA, preprocessing, Research/Outreach, building solution, presentation prep    |
